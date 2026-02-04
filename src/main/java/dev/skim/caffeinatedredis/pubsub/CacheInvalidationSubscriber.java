@@ -1,9 +1,10 @@
 package dev.skim.caffeinatedredis.pubsub;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.skim.caffeinatedredis.cache.TwoLevelCacheManager;
 import dev.skim.caffeinatedredis.message.CacheInvalidationMessage;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.databind.ObjectMapper;
+
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 
@@ -36,8 +37,8 @@ public class CacheInvalidationSubscriber implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         try {
             String jsonMessage = new String(message.getBody(), StandardCharsets.UTF_8);
-            CacheInvalidationMessage invalidationMessage =
-                    objectMapper.readValue(jsonMessage, CacheInvalidationMessage.class);
+            CacheInvalidationMessage invalidationMessage = objectMapper.readValue(jsonMessage,
+                    CacheInvalidationMessage.class);
 
             // Ignore messages published by this instance
             if (invalidationMessage.isFromInstance(instanceId)) {

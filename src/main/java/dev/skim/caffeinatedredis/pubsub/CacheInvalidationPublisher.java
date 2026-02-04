@@ -1,7 +1,7 @@
 package dev.skim.caffeinatedredis.pubsub;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import dev.skim.caffeinatedredis.config.NearCacheProperties;
 import dev.skim.caffeinatedredis.message.CacheInvalidationMessage;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class CacheInvalidationPublisher {
 
             log.debug("Published cache invalidation message: channel={}, message={}",
                     channel, message);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             log.error("Failed to serialize cache invalidation message: {}", message, e);
         } catch (Exception e) {
             log.error("Failed to publish cache invalidation message: {}", message, e);

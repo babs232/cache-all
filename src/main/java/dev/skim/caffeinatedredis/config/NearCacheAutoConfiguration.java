@@ -1,10 +1,7 @@
 package dev.skim.caffeinatedredis.config;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.ObjectMapper;
 import dev.skim.caffeinatedredis.cache.TwoLevelCacheManager;
 import dev.skim.caffeinatedredis.pubsub.CacheInvalidationPublisher;
 import dev.skim.caffeinatedredis.pubsub.CacheInvalidationSubscriber;
@@ -15,8 +12,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.data.redis.autoconfigure.DataRedisAutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -26,18 +23,19 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.UUID;
 
 /**
  * Near Cache auto configuration class.
- * Automatically registers beans through Spring Boot's Auto Configuration mechanism.
+ * Automatically registers beans through Spring Boot's Auto Configuration
+ * mechanism.
  */
 @Slf4j
-@AutoConfiguration(after = RedisAutoConfiguration.class)
-@ConditionalOnClass({RedisConnectionFactory.class, CacheManager.class})
+@AutoConfiguration(after = DataRedisAutoConfiguration.class)
+@ConditionalOnClass({ RedisConnectionFactory.class, CacheManager.class })
 @ConditionalOnProperty(prefix = "near-cache", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(NearCacheProperties.class)
 @EnableCaching
@@ -45,7 +43,8 @@ public class NearCacheAutoConfiguration {
 
     /**
      * Generate unique instance ID.
-     * Used to identify each application instance and ignore self-published Pub/Sub messages.
+     * Used to identify each application instance and ignore self-published Pub/Sub
+     * messages.
      */
     @Bean
     @ConditionalOnMissingBean(name = "nearCacheInstanceId")
@@ -67,17 +66,19 @@ public class NearCacheAutoConfiguration {
     public ObjectMapper nearCacheObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // Java 8 Date/Time support
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        // Java 8 Date/Time support -> not needed for Jackson 3 as it's included by
+        // default
+        // objectMapper.registerModule(new JavaTimeModule());
+        // objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         // Polymorphic type handling configuration
         BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
                 .allowIfBaseType(Object.class)
                 .build();
 
-        objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-
+        // not needed for Jackson 3
+        // objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL,
+        // JsonTypeInfo.As.PROPERTY);
         return objectMapper;
     }
 
@@ -96,8 +97,8 @@ public class NearCacheAutoConfiguration {
 
         // Key uses String, Value uses JSON serialization
         StringRedisSerializer stringSerializer = new StringRedisSerializer();
-        GenericJackson2JsonRedisSerializer jsonSerializer =
-                new GenericJackson2JsonRedisSerializer(nearCacheObjectMapper);
+        GenericJacksonJsonRedisSerializer jsonSerializer = new GenericJacksonJsonRedisSerializer(
+                nearCacheObjectMapper);
 
         template.setKeySerializer(stringSerializer);
         template.setValueSerializer(jsonSerializer);
@@ -124,8 +125,7 @@ public class NearCacheAutoConfiguration {
                 stringRedisTemplate,
                 nearCacheObjectMapper,
                 properties,
-                nearCacheInstanceId
-        );
+                nearCacheInstanceId);
     }
 
     /**
@@ -143,7 +143,8 @@ public class NearCacheAutoConfiguration {
     /**
      * Redis Pub/Sub listener container.
      *
-     * This must only start when Redis (L2) is enabled. In L1-only mode we intentionally skip
+     * This must only start when Redis (L2) is enabled. In L1-only mode we
+     * intentionally skip
      * starting Pub/Sub infrastructure to avoid requiring a real Redis connection.
      */
     @Bean
@@ -182,8 +183,7 @@ public class NearCacheAutoConfiguration {
         TwoLevelCacheManager cacheManager = new TwoLevelCacheManager(
                 properties,
                 nearCacheRedisTemplate,
-                publisher
-        );
+                publisher);
 
         // Setter injection to avoid circular dependency
         subscriber.setCacheManager(cacheManager);

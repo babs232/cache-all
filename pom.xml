@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.1</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>4.0.2</version>
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.skim</groupId>
     <artifactId>spring-boot-starter-near-cache</artifactId>
@@ -14,22 +15,22 @@
     <name>spring-boot-starter-near-cache</name>
     <description>Multi-Level Cache (Near-Cache) Library for Spring Boot MSA</description>
     <packaging>jar</packaging>
-    <url/>
+    <url />
     <licenses>
-        <license/>
+        <license />
     </licenses>
     <developers>
-        <developer/>
+        <developer />
     </developers>
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
+        <connection />
+        <developerConnection />
+        <tag />
+        <url />
     </scm>
     <properties>
-        <java.version>17</java.version>
-        <lombok.version>1.18.36</lombok.version>
+        <java.version>25</java.version>
+        <lombok.version>1.18.42</lombok.version>
     </properties>
     <dependencies>
         <!-- Spring Boot Starter -->
@@ -57,16 +58,32 @@
         </dependency>
 
         <!-- Jackson for JSON Serialization -->
-        <dependency>
+        <!-- <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-        </dependency>
+        </dependency> -->
 
         <!-- Jackson Java 8 Date/Time Support -->
         <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <groupId>tools.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>3.0.0-rc2</version>
+            <scope>compile</scope>
         </dependency>
+        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-core -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>3.0.4</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>3.0.4</version>
+            <scope>compile</scope>
+        </dependency>
+
 
         <!-- Spring Boot Configuration Processor -->
         <dependency>
