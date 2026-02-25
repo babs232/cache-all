@@ -3,8 +3,12 @@ package dev.skim.caffeinatedredis.benchmark;
 import dev.skim.caffeinatedredis.cache.TwoLevelCacheManager;
 import dev.skim.caffeinatedredis.config.NearCacheProperties;
 import dev.skim.caffeinatedredis.pubsub.CacheInvalidationPublisher;
+import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -241,15 +245,27 @@ public class CacheBenchmarkMain {
         }
 
         private static ObjectMapper createBenchmarkObjectMapper() {
-                ObjectMapper objectMapper = new ObjectMapper();
+                // ObjectMapper objectMapper = new ObjectMapper();
                 // objectMapper.registerModule(new JavaTimeModule());
                 // objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-                BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-                                .allowIfBaseType(Object.class)
-                                .build();
+                // BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                // .allowIfBaseType(Object.class)
+                // .build();
                 // objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL,
                 // JsonTypeInfo.As.PROPERTY);
+
+                PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                                .allowIfSubType("dev.skim.caffeinatedredis.message.CacheInvalidationMessage")
+                                .build();
+
+                ObjectMapper objectMapper = JsonMapper.builder()
+                                .addModule(new JavaTimeModule())
+                                .activateDefaultTyping(ptv)
+                                .configure(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS, true) // Write numbers as strings
+                                                                                            // to avoid
+                                                                                            // precision loss
+                                .build();
 
                 return objectMapper;
         }

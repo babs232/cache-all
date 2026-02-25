@@ -11,7 +11,7 @@
     </parent>
     <groupId>dev.skim</groupId>
     <artifactId>spring-boot-starter-near-cache</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <name>spring-boot-starter-near-cache</name>
     <description>Multi-Level Cache (Near-Cache) Library for Spring Boot MSA</description>
     <packaging>jar</packaging>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>3.0.4</version>
+            <version>3.0.0-rc2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

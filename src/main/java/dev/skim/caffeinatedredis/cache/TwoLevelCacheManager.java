@@ -28,8 +28,8 @@ public class TwoLevelCacheManager implements CacheManager {
     private final CacheInvalidationPublisher invalidationPublisher;
 
     public TwoLevelCacheManager(NearCacheProperties properties,
-                                 RedisTemplate<String, Object> redisTemplate,
-                                 CacheInvalidationPublisher invalidationPublisher) {
+            RedisTemplate<String, Object> redisTemplate,
+            CacheInvalidationPublisher invalidationPublisher) {
         this.properties = properties;
         this.redisTemplate = redisTemplate;
         this.invalidationPublisher = invalidationPublisher;
@@ -95,12 +95,12 @@ public class TwoLevelCacheManager implements CacheManager {
                 l2Ttl,
                 properties.getL2().isCacheNullValues(),
                 properties.getL1().isEnabled(),
-                properties.getL2().isEnabled()
-        );
+                properties.getL2().isEnabled());
     }
 
     /**
-     * Evict from L1 cache only (when receiving Pub/Sub message from other instances)
+     * Evict from L1 cache only (when receiving Pub/Sub message from other
+     * instances)
      *
      * @param cacheName cache name
      * @param key       cache key
@@ -148,18 +148,23 @@ public class TwoLevelCacheManager implements CacheManager {
                 l1Cache.estimatedSize(),
                 caffeineStats.hitCount(),
                 caffeineStats.missCount(),
-                caffeineStats.evictionCount()
-        );
+                caffeineStats.evictionCount());
     }
 
     /**
      * Cache statistics record
+     * 
+     * @param cacheName       cache name
+     * @param l1Size          estimated size of L1 cache
+     * @param l1HitCount      L1 cache hit count
+     * @param l1MissCount     L1 cache miss count
+     * @param l1EvictionCount L1 cache eviction count
      */
     public record CacheStats(
             String cacheName,
             long l1Size,
             long l1HitCount,
             long l1MissCount,
-            long l1EvictionCount
-    ) {}
+            long l1EvictionCount) {
+    }
 }

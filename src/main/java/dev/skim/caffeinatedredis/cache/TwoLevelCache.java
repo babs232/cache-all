@@ -3,9 +3,10 @@ package dev.skim.caffeinatedredis.cache;
 import com.github.benmanes.caffeine.cache.Cache;
 import dev.skim.caffeinatedredis.pubsub.CacheInvalidationPublisher;
 import lombok.extern.slf4j.Slf4j;
+
+import org.jspecify.annotations.Nullable;
 import org.springframework.cache.support.AbstractValueAdaptingCache;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.lang.Nullable;
 
 import java.time.Duration;
 import java.util.concurrent.Callable;
@@ -36,14 +37,14 @@ public class TwoLevelCache extends AbstractValueAdaptingCache {
     private final boolean l2Enabled;
 
     public TwoLevelCache(String name,
-                         Cache<Object, Object> l1Cache,
-                         RedisTemplate<String, Object> redisTemplate,
-                         CacheInvalidationPublisher invalidationPublisher,
-                         String keyPrefix,
-                         Duration l2Ttl,
-                         boolean allowNullValues,
-                         boolean l1Enabled,
-                         boolean l2Enabled) {
+            Cache<Object, Object> l1Cache,
+            RedisTemplate<String, Object> redisTemplate,
+            CacheInvalidationPublisher invalidationPublisher,
+            String keyPrefix,
+            Duration l2Ttl,
+            boolean allowNullValues,
+            boolean l1Enabled,
+            boolean l2Enabled) {
         super(allowNullValues);
         this.name = name;
         this.l1Cache = l1Cache;
@@ -150,7 +151,8 @@ public class TwoLevelCache extends AbstractValueAdaptingCache {
             }
         }
 
-        // Broadcast invalidation to other instances so they don't serve stale L1 entries
+        // Broadcast invalidation to other instances so they don't serve stale L1
+        // entries
         // (they will reload the latest value from L2 on next access)
         if (invalidationPublisher != null) {
             invalidationPublisher.publishEvict(name, key);

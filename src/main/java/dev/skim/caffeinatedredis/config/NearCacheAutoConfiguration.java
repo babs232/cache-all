@@ -1,7 +1,11 @@
 package dev.skim.caffeinatedredis.config;
 
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.json.JsonWriteFeature;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import dev.skim.caffeinatedredis.cache.TwoLevelCacheManager;
 import dev.skim.caffeinatedredis.pubsub.CacheInvalidationPublisher;
 import dev.skim.caffeinatedredis.pubsub.CacheInvalidationSubscriber;
@@ -64,7 +68,7 @@ public class NearCacheAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "nearCacheObjectMapper")
     public ObjectMapper nearCacheObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        // ObjectMapper objectMapper = new ObjectMapper();
 
         // Java 8 Date/Time support -> not needed for Jackson 3 as it's included by
         // default
@@ -72,13 +76,27 @@ public class NearCacheAutoConfiguration {
         // objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         // Polymorphic type handling configuration
-        BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-                .allowIfBaseType(Object.class)
-                .build();
+        /*
+         * BasicPolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+         * .allowIfBaseType(Object.class)
+         * .build();
+         */
 
         // not needed for Jackson 3
         // objectMapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL,
         // JsonTypeInfo.As.PROPERTY);
+
+        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
+                .allowIfSubType("dev.skim.caffeinatedredis.message.CacheInvalidationMessage")
+                .build();
+
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .activateDefaultTyping(ptv)
+                .configure(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS, true) // Write numbers as strings to avoid
+                                                                            // precision loss
+                .build();
+
         return objectMapper;
     }
 
