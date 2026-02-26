@@ -11,7 +11,7 @@
     </parent>
     <groupId>dev.skim</groupId>
     <artifactId>spring-boot-starter-near-cache</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.7-SNAPSHOT</version>
     <name>spring-boot-starter-near-cache</name>
     <description>Multi-Level Cache (Near-Cache) Library for Spring Boot MSA</description>
     <packaging>jar</packaging>
@@ -63,27 +63,22 @@
             <artifactId>jackson-databind</artifactId>
         </dependency> -->
 
-        <!-- Jackson Java 8 Date/Time Support -->
+        <!-- Jackson is provided by Spring Boot starter (spring-boot-starter pulls Jackson) -->
+        <!-- Make Jackson explicit via Spring Boot starter to ensure managed versions are present -->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <!-- Java Time module (aligned with Jackson provided by spring-boot-jackson) -->
+        <!-- <dependency>
             <groupId>tools.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>3.0.0-rc2</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-core -->
+        </dependency> -->
         <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>3.0.0-rc2</version>
-            <scope>compile</scope>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>3.0.4</version>
-            <scope>compile</scope>
-        </dependency>
-
 
         <!-- Spring Boot Configuration Processor -->
         <dependency>
@@ -175,5 +170,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

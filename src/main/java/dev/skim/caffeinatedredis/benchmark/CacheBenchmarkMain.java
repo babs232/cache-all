@@ -8,7 +8,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -260,11 +259,8 @@ public class CacheBenchmarkMain {
                                 .build();
 
                 ObjectMapper objectMapper = JsonMapper.builder()
-                                .addModule(new JavaTimeModule())
                                 .activateDefaultTyping(ptv)
-                                .configure(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS, true) // Write numbers as strings
-                                                                                            // to avoid
-                                                                                            // precision loss
+                                .configure(JsonWriteFeature.WRITE_NUMBERS_AS_STRINGS, true)
                                 .build();
 
                 return objectMapper;
